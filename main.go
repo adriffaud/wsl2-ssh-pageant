@@ -195,6 +195,13 @@ func handleGPG(path string) {
 		return
 	}
 
+  defer func(gpgConn net.Conn) {
+    err := gpgConn.Close()
+    if err != nil && *verbose {
+      log.Printf("Unable to close the gpg connection: %v\n", err)
+    }
+  }(gpgConn)
+
 	_, err = gpgConn.Write(nonce[:])
 	if err != nil {
 		if *verbose {
